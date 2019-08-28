@@ -1,7 +1,9 @@
 import os
 import time
 
-# TODO: Cryptography, limited login tries before account block
+# TODO: Proof-of-concept .json with accounts
+# TODO: Password encryption
+# TODO: Account block after 3 failed login tries
 
 def main():
 
