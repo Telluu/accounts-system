@@ -75,7 +75,7 @@ def main():
                     print('Password changed!')
                 elif password != old_password:
                     print('Old password is incorrect!')
-                else:
+                elif new_password != compare_new_password:
                     print('New passwords do not match!')
 
             if option == 2:
