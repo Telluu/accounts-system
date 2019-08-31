@@ -11,8 +11,8 @@ from cryptography.fernet import Fernet
 
 def main():
 
-    # For testing purposes
-    key = b'pRmgMa8T0INjEAfksaq2aafzoZXEuwKI7wDe4c1F8AY='
+    with open('key.key') as file:
+        key = file.read()
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
