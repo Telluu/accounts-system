@@ -4,15 +4,8 @@ import time
 import string
 import json
 from getpass import getpass
-from passlib.context import CryptContext
 import hashlib
 import binascii
-
-
-pwd_context = CryptContext(
-    schemes=['pbkdf2_sha256'],
-    default='pbkdf2_sha256',
-    pbkdf2_sha256__default_rounds=30000)
 
 
 def main():
