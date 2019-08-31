@@ -1,4 +1,4 @@
 {
-  "root": "gAAAAABdaorA3YhG7THgMyNvEtwjVWWiwVKU-xVgtHlYN3t4_vrOqGI_yLCERyJ_TuVEpuFpoTK2Po5c9rJXlxeaJGrYvvPdlw==",
-  "admin": "gAAAAABdaorF5DaMmgBP2OF4AebZx-V22NrJxkDG1ee8TFkPBTtYgJEjhVDOTWDanzcsTeEwgF4Ow_VUxtRBUf9PP2KsW16txA=="
+    "root": "$pbkdf2-sha256$30000$MwbAeI8xRmjNmbO2du59jw$5Bmu.3UQ9nYC9KC2OJv16OY.tFjIoNiG5EN54JSW75Y",
+    "admin": "$pbkdf2-sha256$30000$4jyn1BqD8N47h3BOKQWgVA$kWxw9OKT.Z6J9gHpymcW8nLpgpGZKXl73UMSr8ja5W4"
 }

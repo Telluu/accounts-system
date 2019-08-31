@@ -4,14 +4,16 @@ import time
 import string
 import json
 from getpass import getpass
-from cryptography.fernet import Fernet
+from passlib.context import CryptContext
+
+
+pwd_context = CryptContext(
+    schemes=['pbkdf2_sha256'],
+    default='pbkdf2_sha256',
+    pbkdf2_sha256__default_rounds=30000)
 
 
 def main():
-
-    with open('key.key') as file:
-        key = file.read()
-
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -25,10 +27,7 @@ def main():
             login = input('\nLogin: ')
             pwd = getpass()
 
-            if login in accounts() and pwd == decrpyt_pwd(login, key):
-                print('Login successful.')
-                time.sleep(2)
-
+            if login in accounts() and verify_pwd(login, pwd) == True:
                 # Logged in phase
                 while True:
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -46,21 +45,23 @@ def main():
                         new_pwd = getpass('\nNew password: ')
                         c_new_pwd = getpass('Repeat new password: ')
 
-                        if pwd == decrpyt_pwd(login, key) and new_pwd == c_new_pwd:
-                            change_password(login, new_pwd, key)
+                        if verify_pwd(login, pwd) == True and new_pwd == c_new_pwd:
+                            change_password(login, new_pwd)
                             print('\nPassword changed!')
                         elif new_pwd == c_new_pwd:
                             print('\nNew passwords do not match!')
-                        elif decrpyt_pwd(login, key) == pwd:
+                        elif verify_pwd(login, pwd) == True:
                             print('\nOld password is incorrect!')
                         time.sleep(2)
 
+                    # Log-out
                     if option == '2':
                         break
 
+                    # Account deletion
                     if option == '3':
                         pwd = getpass('\nEnter password to delete account: ')
-                        if pwd == decrpyt_pwd(login, key):
+                        if verify_pwd(login, pwd) == True:
                             delete_account(login)
                             print('Account deleted!')
                             break
@@ -79,16 +80,14 @@ def main():
             c_pwd = getpass('Repeat password: ')
 
             if login not in accounts() and pwd == c_pwd:
-                if len(login) < 4:
-                    print('Login is too short (min. 4 characters)')
-                elif len(pwd) < 6:
-                    print('Password is too short')
+                if len(login) < 4 or len(pwd) < 4:
+                    print('Login or password is too short (min. 4 characters)')
                 elif any(char in string.punctuation for char in login):
                     print('No special characters allowed in login!')
                 elif any(char in string.whitespace for char in login + pwd):
                     print('No spaces allowed in login or password!')
                 else:
-                    create_account(login, pwd, key)
+                    create_account(login, pwd)
                     print('Account created successfully!')
             elif login in accounts():
                 print('This login is already taken!')
@@ -98,29 +97,21 @@ def main():
             time.sleep(2)
 
 
-def create_account(login, pwd, key):
-    f = Fernet(key)
-    encrypted = f.encrypt(pwd.encode())
-    pwd = encrypted.decode()
-
+def create_account(login, pwd):
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
-        data[login] = pwd
+        data[login] = pwd_context.hash(pwd)
         accounts.seek(0)
-        json.dump(data, accounts, indent=2)
+        json.dump(data, accounts, indent=4)
         accounts.truncate()
 
 
-def change_password(login, new_pwd, key):
-    f = Fernet(key)
-    encrypted = f.encrypt(new_pwd.encode())
-    new_pwd = encrypted.decode()
-
+def change_password(login, new_pwd):
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
-        data[login] = new_pwd
+        data[login] = pwd_context.hash(new_pwd)
         accounts.seek(0)
-        json.dump(data, accounts, indent=2)
+        json.dump(data, accounts, indent=4)
         accounts.truncate()
 
 
@@ -129,7 +120,7 @@ def delete_account(login):
         data = json.load(accounts)
         del data[login]
         accounts.seek(0)
-        json.dump(data, accounts, indent=2)
+        json.dump(data, accounts, indent=4)
         accounts.truncate()
 
 
@@ -140,15 +131,12 @@ def accounts():
     return accounts
 
 
-def decrpyt_pwd(login, key):
-    f = Fernet(key)
-
+def verify_pwd(login, password):
     with open('accounts.json') as accounts:
         accounts = json.load(accounts)
-        encrypted = accounts.get(login)
-        decrypted = f.decrypt(encrypted.encode())
+        hashed = accounts.get(login)
 
-    return decrypted.decode()
+    return pwd_context.verify(password, hashed)
 
 
 main()
