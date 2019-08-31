@@ -48,9 +48,9 @@ def main():
                         if verify_pwd(login, pwd) == True and new_pwd == c_new_pwd:
                             change_password(login, new_pwd)
                             print('\nPassword changed!')
-                        elif new_pwd == c_new_pwd:
+                        elif new_pwd != c_new_pwd:
                             print('\nNew passwords do not match!')
-                        elif verify_pwd(login, pwd) == True:
+                        elif verify_pwd(login, pwd) != True:
                             print('\nOld password is incorrect!')
                         time.sleep(2)
 
@@ -74,8 +74,7 @@ def main():
 
         # Account creation
         elif option == '2':
-            login = input(
-                '\nLogin: ')
+            login = input('\nLogin: ')
             pwd = getpass()
             c_pwd = getpass('Repeat password: ')
 
