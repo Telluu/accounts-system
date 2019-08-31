@@ -1,10 +1,4 @@
 {
-  "root": {
-    "password": "gAAAAABdakX9e7Rq8YBHfQ1U4n6v_o5u2aY54-dv6w_ZU8h6vY-j1xcI2Pvk9s4wSDCHKElVzql4_q2Q6pU3Ge0_fXbRpdqRjA==",
-    "blocked": "false"
-  },
-  "admin": {
-    "password": "gAAAAABdakYEXoY_M4njdWdu2DjYXljimGVp1zV6QVNwQrAil-PdgnY_l3euJlml9YtU3EGDl9Q8aAqlavDsbmRk0CHltWJjtQ==",
-    "blocked": "false"
-  }
+  "root": "gAAAAABdaorA3YhG7THgMyNvEtwjVWWiwVKU-xVgtHlYN3t4_vrOqGI_yLCERyJ_TuVEpuFpoTK2Po5c9rJXlxeaJGrYvvPdlw==",
+  "admin": "gAAAAABdaorF5DaMmgBP2OF4AebZx-V22NrJxkDG1ee8TFkPBTtYgJEjhVDOTWDanzcsTeEwgF4Ow_VUxtRBUf9PP2KsW16txA=="
 }
