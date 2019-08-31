@@ -27,30 +27,35 @@ def main():
                     os.system('cls' if os.name == 'nt' else 'clear')
 
                     print(f'Welcome {login}!\n')
-                    print('1. Change password')
-                    print('2. Log-out')
+                    print('1. Log-out')
+                    print('2. Change password')
                     print('3. Delete account')
 
                     option = input('\nOption: ')
 
-                    # Password changing
+                    # Log-out
                     if option == '1':
+                        break
+
+                    # Password changing
+                    if option == '2':
                         pwd = getpass('\nOld password: ')
                         new_pwd = getpass('\nNew password: ')
                         c_new_pwd = getpass('Repeat new password: ')
 
                         if verify_password(login, pwd) == True and new_pwd == c_new_pwd:
-                            change_password(login, new_pwd)
-                            print('\nPassword changed!')
+                            if len(pwd) < 4:
+                                print('Password is too short (min. 4 characters)')
+                            elif any(char in string.whitespace for char in pwd):
+                                print('No spaces allowed in password!')
+                            else:
+                                change_password(login, new_pwd)
+                                print('\nPassword changed!')
                         elif new_pwd != c_new_pwd:
                             print('\nNew passwords do not match!')
                         elif verify_password(login, pwd) != True:
                             print('\nOld password is incorrect!')
                         time.sleep(2)
-
-                    # Log-out
-                    if option == '2':
-                        break
 
                     # Account deletion
                     if option == '3':
