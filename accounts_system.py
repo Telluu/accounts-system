@@ -92,7 +92,6 @@ def main():
 
 def create_account(login, password):
     password = hash_password(password)
-
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
         data[login] = password
