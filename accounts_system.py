@@ -5,6 +5,8 @@ import string
 import json
 from getpass import getpass
 from passlib.context import CryptContext
+import hashlib
+import binascii
 
 
 pwd_context = CryptContext(
@@ -27,7 +29,7 @@ def main():
             login = input('\nLogin: ')
             pwd = getpass()
 
-            if login in accounts() and verify_pwd(login, pwd) == True:
+            if login in accounts() and verify_password(login, pwd) == True:
                 # Logged in phase
                 while True:
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -45,12 +47,12 @@ def main():
                         new_pwd = getpass('\nNew password: ')
                         c_new_pwd = getpass('Repeat new password: ')
 
-                        if verify_pwd(login, pwd) == True and new_pwd == c_new_pwd:
+                        if verify_password(login, pwd) == True and new_pwd == c_new_pwd:
                             change_password(login, new_pwd)
                             print('\nPassword changed!')
                         elif new_pwd != c_new_pwd:
                             print('\nNew passwords do not match!')
-                        elif verify_pwd(login, pwd) != True:
+                        elif verify_password(login, pwd) != True:
                             print('\nOld password is incorrect!')
                         time.sleep(2)
 
@@ -61,7 +63,7 @@ def main():
                     # Account deletion
                     if option == '3':
                         pwd = getpass('\nEnter password to delete account: ')
-                        if verify_pwd(login, pwd) == True:
+                        if verify_password(login, pwd) == True:
                             delete_account(login)
                             print('Account deleted!')
                             break
@@ -97,18 +99,21 @@ def main():
 
 
 def create_account(login, password):
+    password = hash_password(password)
+
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
-        data[login] = pwd_context.hash(password)
+        data[login] = password
         accounts.seek(0)
         json.dump(data, accounts, indent=4)
         accounts.truncate()
 
 
 def change_password(login, new_password):
+    new_password = hash_password(new_password)
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
-        data[login] = pwd_context.hash(new_password)
+        data[login] = new_password
         accounts.seek(0)
         json.dump(data, accounts, indent=4)
         accounts.truncate()
@@ -130,12 +135,27 @@ def accounts():
     return accounts
 
 
-def verify_pwd(login, password):
+def hash_password(password):
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+    pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'),
+                                  salt, 100000)
+    pwdhash = binascii.hexlify(pwdhash)
+    return (salt + pwdhash).decode('ascii')
+
+
+def verify_password(login, password):
     with open('accounts.json') as accounts:
         accounts = json.load(accounts)
-        hashed = accounts.get(login)
+        stored_password = accounts.get(login)
 
-    return pwd_context.verify(password, hashed)
+    salt = stored_password[:64]
+    stored_password = stored_password[64:]
+    pwdhash = hashlib.pbkdf2_hmac('sha512',
+                                  password.encode('utf-8'),
+                                  salt.encode('ascii'),
+                                  100000)
+    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
+    return pwdhash == stored_password
 
 
 main()
