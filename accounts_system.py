@@ -75,8 +75,8 @@ def main():
         # Account creation
         elif option == '2':
             login = input(
-                '\nLogin (min. 4 characters and no spaces or special chars): ')
-            pwd = getpass('Password (min. 6 characters and no spaces): ')
+                '\nLogin: ')
+            pwd = getpass()
             c_pwd = getpass('Repeat password: ')
 
             if login not in accounts() and pwd == c_pwd:
@@ -97,19 +97,19 @@ def main():
             time.sleep(2)
 
 
-def create_account(login, pwd):
+def create_account(login, password):
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
-        data[login] = pwd_context.hash(pwd)
+        data[login] = pwd_context.hash(password)
         accounts.seek(0)
         json.dump(data, accounts, indent=4)
         accounts.truncate()
 
 
-def change_password(login, new_pwd):
+def change_password(login, new_password):
     with open('accounts.json', 'r+') as accounts:
         data = json.load(accounts)
-        data[login] = pwd_context.hash(new_pwd)
+        data[login] = pwd_context.hash(new_password)
         accounts.seek(0)
         json.dump(data, accounts, indent=4)
         accounts.truncate()
