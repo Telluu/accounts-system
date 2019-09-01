@@ -10,10 +10,8 @@ import binascii
 def main():
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-
         print('1. Login')
         print('2. Register')
-
         option = input('\nOption: ')
 
         # Login
@@ -21,16 +19,15 @@ def main():
             login = input('\nLogin: ')
             pwd = getpass()
 
-            if login in accounts() and verify_password(login, pwd) == True:
+            # Checking credentials
+            if login in users() and verify_password(login, pwd) == True:
                 # Logged in phase
                 while True:
                     os.system('cls' if os.name == 'nt' else 'clear')
-
                     print(f'Welcome {login}!\n')
                     print('1. Log-out')
                     print('2. Change password')
                     print('3. Delete account')
-
                     option = input('\nOption: ')
 
                     # Log-out
@@ -60,6 +57,7 @@ def main():
                     # Account deletion
                     if option == '3':
                         pwd = getpass('\nEnter password to delete account: ')
+
                         if verify_password(login, pwd) == True:
                             delete_account(login)
                             print('Account deleted!')
@@ -77,7 +75,7 @@ def main():
             pwd = getpass()
             c_pwd = getpass('Repeat password: ')
 
-            if login not in accounts() and pwd == c_pwd:
+            if login not in users() and pwd == c_pwd:
                 if len(login) < 4 or len(pwd) < 4:
                     print('Login or password is too short (min. 4 characters)')
                 elif any(char in string.punctuation for char in login):
@@ -87,7 +85,7 @@ def main():
                 else:
                     create_account(login, pwd)
                     print('Account created successfully!')
-            elif login in accounts():
+            elif login in users():
                 print('This login is already taken!')
             elif pwd != c_pwd:
                 print('Passwords do not match!')
@@ -97,38 +95,38 @@ def main():
 
 def create_account(login, password):
     password = hash_password(password)
-    with open('accounts.json', 'r+') as accounts:
-        data = json.load(accounts)
+    with open('users.json', 'r+') as users:
+        data = json.load(users)
         data[login] = password
-        accounts.seek(0)
-        json.dump(data, accounts, indent=4)
-        accounts.truncate()
+        users.seek(0)
+        json.dump(data, users, indent=4)
+        users.truncate()
 
 
 def change_password(login, new_password):
     new_password = hash_password(new_password)
-    with open('accounts.json', 'r+') as accounts:
-        data = json.load(accounts)
+    with open('users.json', 'r+') as users:
+        data = json.load(users)
         data[login] = new_password
-        accounts.seek(0)
-        json.dump(data, accounts, indent=4)
-        accounts.truncate()
+        users.seek(0)
+        json.dump(data, users, indent=4)
+        users.truncate()
 
 
 def delete_account(login):
-    with open('accounts.json', 'r+') as accounts:
-        data = json.load(accounts)
+    with open('users.json', 'r+') as users:
+        data = json.load(users)
         del data[login]
-        accounts.seek(0)
-        json.dump(data, accounts, indent=4)
-        accounts.truncate()
+        users.seek(0)
+        json.dump(data, users, indent=4)
+        users.truncate()
 
 
-def accounts():
-    with open('accounts.json') as accounts:
-        accounts = json.load(accounts)
+def users():
+    with open('users.json') as users:
+        users = json.load(users)
 
-    return accounts
+    return users
 
 
 def hash_password(password):
@@ -140,9 +138,9 @@ def hash_password(password):
 
 
 def verify_password(login, password):
-    with open('accounts.json') as accounts:
-        accounts = json.load(accounts)
-        stored_password = accounts.get(login)
+    with open('users.json') as users:
+        users = json.load(users)
+        stored_password = users.get(login)
 
     salt = stored_password[:64]
     stored_password = stored_password[64:]
