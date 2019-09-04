@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import os
 import time
 import string
@@ -152,4 +154,5 @@ def verify_password(login, password):
     return pwdhash == stored_password
 
 
-main()
+if __name__ == '__main__':
+    main()
